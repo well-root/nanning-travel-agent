@@ -1,0 +1,16 @@
+[project]
+name = "nanning-travel-agent"
+version = "0.1.0"
+description = "Add your description here"
+authors = [
+    { name = "17254", email = "1725424087@qq.com" }
+]
+requires-python = ">=3.12"
+dependencies = []
+
+[project.scripts]
+nanning-travel-agent = "nanning_travel_agent:main"
+
+[build-system]
+requires = ["uv_build>=0.13.5,<0.14.0"]
+build-backend = "uv_build"

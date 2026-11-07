@@ -1,0 +1,21 @@
+# IDE
+.idea/
+.vscode/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+
+# Virtual env
+.venv/
+venv/
+
+# Plugin state (local session history)
+.remember/
+
+# Regenerable data (rebuild via scripts/build_line_docs.py)
+data/raw/
+.env
