@@ -18,4 +18,12 @@ venv/
 
 # Regenerable data (rebuild via scripts/build_line_docs.py)
 data/raw/
+
+# Claude Code personal settings (not shared)
+.claude/settings.local.json
+
+
+# Secrets & runtime storage
 .env
+qdrant_storage/
+

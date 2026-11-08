@@ -6,10 +6,23 @@ authors = [
     { name = "17254", email = "1725424087@qq.com" }
 ]
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "langchain-mcp-adapters>=0.3.2",
+    "langchain-openai>=1.7.4",
+    "langchain-qdrant>=1.1.0",
+    "langgraph>=1.2.20",
+    "python-dotenv>=1.2.4",
+    "qdrant-client>=1.20.0",
+    "sentence-transformers>=6.2.0",
+    "uv-build>=0.13.5",
+]
 
 [project.scripts]
 nanning-travel-agent = "nanning_travel_agent:main"
+
+[[tool.uv.index]]
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
+default = true
 
 [build-system]
 requires = ["uv_build>=0.13.5,<0.14.0"]
