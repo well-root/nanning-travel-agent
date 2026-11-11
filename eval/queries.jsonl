@@ -1,0 +1,15 @@
+{"id": "p1", "category": "policy", "question": "南宁地铁起步价是多少，这个价格能坐多远？", "expect_tools": ["search_nanning_docs"], "must_contain": ["2元", "6公里"], "must_not_contain": [], "note": "票价计价规则：起步价 2 元含 6 公里"}
+{"id": "p2", "category": "policy", "question": "南宁市民卡坐地铁打几折？", "expect_tools": ["search_nanning_docs"], "must_contain": ["9折"], "must_not_contain": [], "note": "票种与优惠：市民卡 9 折"}
+{"id": "p3", "category": "policy", "question": "宁仔计次票在哪些车站能买到？", "expect_tools": ["search_nanning_docs"], "must_contain": ["火车东站", "朝阳广场"], "must_not_contain": [], "note": "计次票销售车站清单"}
+{"id": "p4", "category": "policy", "question": "南宁地铁周五、周六运营到几点？", "expect_tools": ["search_nanning_docs"], "must_contain": ["24:00"], "must_not_contain": [], "note": "运营时间：周五周六延长至 24:00"}
+{"id": "p5", "category": "policy", "question": "坐完公交 90 分钟内换乘地铁有优惠吗？", "expect_tools": ["search_nanning_docs"], "must_contain": ["5折"], "must_not_contain": [], "note": "换乘优惠：公交后 90 分钟内 5 折"}
+{"id": "r1", "category": "route", "question": "从朝阳广场到火车东站怎么走？", "expect_tools": ["find_metro_route"], "must_contain": ["13站", "1号线"], "must_not_contain": [], "note": "1 号线直达，站序 14→1 共 13 站"}
+{"id": "r2", "category": "route", "question": "从新民路到南宁剧场怎么走？", "expect_tools": ["find_metro_route"], "must_contain": ["朝阳广场", "2号线"], "must_not_contain": [], "note": "需在朝阳广场换乘 2 号线"}
+{"id": "r3", "category": "route", "question": "从火车东站到石埠怎么走？", "expect_tools": ["find_metro_route"], "must_contain": ["24站", "1号线"], "must_not_contain": [], "note": "1 号线反向全程，站序 1→25 共 24 站"}
+{"id": "r4", "category": "route", "question": "从金湖广场到广西大学怎么走？", "expect_tools": ["find_metro_route"], "must_contain": ["8站", "1号线"], "must_not_contain": [], "note": "同线中段，站序 9→17 共 8 站"}
+{"id": "m1", "category": "mixed", "question": "从朝阳广场到火车东站要多少钱？", "expect_tools": ["find_metro_route", "search_nanning_docs"], "must_contain": ["13站", "元"], "must_not_contain": [], "note": "路线 + 票价，两个工具都要调"}
+{"id": "m2", "category": "mixed", "question": "从新民路到南宁剧场怎么走？用市民卡要多少钱？", "expect_tools": ["find_metro_route", "search_nanning_docs"], "must_contain": ["朝阳广场", "9折"], "must_not_contain": [], "note": "换乘路线 + 优惠折扣"}
+{"id": "m3", "category": "mixed", "question": "从金湖广场到南宁剧场怎么走？周五晚上最晚几点还能坐？", "expect_tools": ["find_metro_route", "search_nanning_docs"], "must_contain": ["朝阳广场", "24:00"], "must_not_contain": [], "note": "换乘路线 + 运营时间"}
+{"id": "e1", "category": "edge", "question": "从朝阳广场到北京西站怎么走？", "expect_tools": ["find_metro_route"], "must_contain": ["北京西站"], "must_contain_any": ["查不到", "不是南宁地铁", "不在南宁地铁", "没有北京西站"], "must_not_contain": [], "note": "错站名：必须明确说查不到/不在线网；给替代路线可以接受，不禁用词"}
+{"id": "e2", "category": "edge", "question": "从南宁东站到朝阳广场怎么走？", "expect_tools": ["find_metro_route"], "must_contain": ["火车东站"], "must_not_contain": [], "note": "别名：南宁东站是高铁站，地铁站名是火车东站；允许模型纠正别名后给路线（产品期望行为），不要求复述报错"}
+{"id": "e3", "category": "edge", "question": "你好，你能做什么？", "expect_tools": [], "must_contain": [], "must_not_contain": [], "note": "寒暄：不该调任何工具，只验不崩、不乱调"}
