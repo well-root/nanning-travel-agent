@@ -27,3 +27,9 @@ data/raw/
 .env
 qdrant_storage/
 
+# LangGraph 本地会话状态
+checkpoints.sqlite
+checkpoints.sqlite-wal
+checkpoints.sqlite-shm
+data/memory/
+

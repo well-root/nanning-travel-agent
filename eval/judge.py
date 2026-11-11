@@ -12,14 +12,14 @@ from datetime import datetime
 from pathlib import Path
 
 from dotenv import load_dotenv
-from langchain_core.messages import HumanMessage, SystemMessage
+from langchain_core.messages import HumanMessage
 from langchain_openai import ChatOpenAI
 
 EVAL_DIR = Path(__file__).resolve().parent
 ROOT = EVAL_DIR.parent
 load_dotenv(ROOT / ".env")
 
-from nanning_travel_agent.agent.graph import SYSTEM_PROMPT, build_graph
+from nanning_travel_agent.agent.graph import  build_graph
 from nanning_travel_agent.mcp.client import load_metro_tools
 from nanning_travel_agent.rag.tools import search_nanning_docs
 
@@ -96,7 +96,7 @@ async def run_group(group: str, limit: int | None, ids: set[str] | None = None) 
         error = ""
         try:
             result = await graph.ainvoke(
-                {"messages": [SystemMessage(SYSTEM_PROMPT), HumanMessage(case["question"])]},
+                {"messages": [ HumanMessage(case["question"])]},
                 config=config,
             )
             messages = result["messages"]
