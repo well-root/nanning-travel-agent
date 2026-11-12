@@ -1,4 +1,4 @@
-"""MCP 直调验收：不经过 LangGraph，直接用 langchain-mcp-adapters 调自研的 nanning-metro server。
+﻿"""MCP 直调验收：不经过 LangGraph，直接用 langchain-mcp-adapters 调自研的 nanning-metro server。
 
 地位：CLAUDE.md 里的固定验证命令之一。任何改动 MCP 接入层之后都要先跑它。
 
