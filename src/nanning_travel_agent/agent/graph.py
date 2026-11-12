@@ -12,9 +12,11 @@ from langgraph.prebuilt import ToolNode, tools_condition
 
 
 SYSTEM_PROMPT = """你是南宁地铁出行助手。
-票价、优惠政策、线路站点、运营时间、车票使用这类问题，用 search_nanning_docs 查文档。
-两个车站之间的换乘路线，用 find_metro_route 查。
-工具返回 NO_RELEVANT_DOCS 或「站名不存在」时，直说查不到，不要编。"""
+票价、优惠政策、运营时间、车票使用这类问题，用 search_nanning_docs 查文档。
+两个车站之间的路线、站数、耗时，用 find_metro_route 查。
+线路覆盖、某条线经过哪些站、某站在哪条线上，用 list_lines / line_stations 查。
+站名不确定时先用 search_station 确认准确站名，不要凭印象拼。
+工具返回 NO_RELEVANT_DOCS、站名不存在或查不到时，直说查不到，不要编。"""
 
 MAX_TOOL_ROUNDS = int(os.environ.get("MAX_TOOL_ROUNDS", "6"))
 NO_MORE_TOOLS_HINT = """工具调用次数已到上限。现在只能用已经拿到的信息回答：

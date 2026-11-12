@@ -13,3 +13,6 @@
 {"id": "e1", "category": "edge", "question": "从朝阳广场到北京西站怎么走？", "expect_tools": ["find_metro_route"], "must_contain": ["北京西站"], "must_contain_any": ["查不到", "不是南宁地铁", "不在南宁地铁", "没有北京西站"], "must_not_contain": [], "note": "错站名：必须明确说查不到/不在线网；给替代路线可以接受，不禁用词"}
 {"id": "e2", "category": "edge", "question": "从南宁东站到朝阳广场怎么走？", "expect_tools": ["find_metro_route"], "must_contain": ["火车东站"], "must_not_contain": [], "note": "别名：南宁东站是高铁站，地铁站名是火车东站；允许模型纠正别名后给路线（产品期望行为），不要求复述报错"}
 {"id": "e3", "category": "edge", "question": "你好，你能做什么？", "expect_tools": [], "must_contain": [], "must_not_contain": [], "note": "寒暄：不该调任何工具，只验不崩、不乱调"}
+{"id": "t1", "category": "route", "question": "南宁地铁有几条线路？分别从哪到哪？", "expect_tools": ["list_lines"], "must_contain": ["1号线", "5号线"], "must_not_contain": [], "note": "线路覆盖，应该走 MCP 而不是 RAG"}
+{"id": "t2", "category": "route", "question": "3号线经过哪些站？", "expect_tools": ["line_stations"], "must_contain": ["3号线"], "must_not_contain": [], "note": "线路站序"}
+{"id": "t3", "category": "edge", "question": "南宁东站是哪条线的？", "expect_tools": ["search_station"], "must_contain": ["火车东站"], "must_not_contain": [], "note": "别名：南宁东站→火车东站（1号线）"}
