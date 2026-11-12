@@ -18,6 +18,7 @@ venv/
 
 # Regenerable data (rebuild via scripts/build_line_docs.py)
 data/raw/
+data
 
 # Claude Code personal settings (not shared)
 .claude/settings.local.json

@@ -1,6 +1,6 @@
 ---
 title: 南宁轨道交通3号线介绍
-source: nanning-metro-mcp/data/nanning_metro.json（高德地图静态线路数据）
+source: nanning-metro-metro_mcp/data/nanning_metro.json（高德地图静态线路数据）
 source_type: 静态线路数据（非官方文档，与自研 MCP 工具同源）
 fetched_at: 2026-11-06
 ---

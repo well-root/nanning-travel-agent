@@ -19,7 +19,8 @@ MIN_CHUNK = 10                       #最短子块
 
 #检索
 RETRIEVAL_K = 4
-SCORE_THRESHOLD = None               # 先 None！test_retrieval 打印分数后再定（0.4 只是起点）
+SCORE_THRESHOLD = 0.60              #混合检索的阈值
+
 
 #DocLoader 校验用
 REQUIRED_META = ("title", "source", "source_type", "fetched_at")

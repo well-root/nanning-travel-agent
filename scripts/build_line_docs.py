@@ -1,6 +1,6 @@
 """从高德静态线路数据生成 5 条线路的 markdown 文档。
 
-数据源: nanning-metro-mcp/data/nanning_metro.json (与 MCP 工具同源，保证一致性)
+数据源: nanning-metro-metro_mcp/data/nanning_metro.json (与 MCP 工具同源，保证一致性)
 输出:   data/docs/line_{1..5}.md
 
 用法: python scripts/build_line_docs.py
@@ -30,7 +30,7 @@ def main():
                          for i, s in enumerate(stations, 1))
         doc = f"""---
 title: 南宁轨道交通{name}介绍
-source: nanning-metro-mcp/data/nanning_metro.json（高德地图静态线路数据）
+source: nanning-metro-metro_mcp/data/nanning_metro.json（高德地图静态线路数据）
 source_type: 静态线路数据（非官方文档，与自研 MCP 工具同源）
 fetched_at: {FETCHED_AT}
 ---

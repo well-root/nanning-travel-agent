@@ -13,7 +13,7 @@ from langchain_openai import ChatOpenAI
 from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
 
 from nanning_travel_agent.agent.graph import build_graph
-from nanning_travel_agent.mcp.client import load_metro_tools
+from nanning_travel_agent.metro_mcp.metro_client import load_metro_tools
 from nanning_travel_agent.rag.tools import search_nanning_docs
 
 RECURSION_LIMIT = 20
