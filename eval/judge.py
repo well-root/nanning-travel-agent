@@ -20,7 +20,7 @@ ROOT = EVAL_DIR.parent
 load_dotenv(ROOT / ".env")
 
 from nanning_travel_agent.agent.graph import  build_graph
-from nanning_travel_agent.mcp.client import load_metro_tools
+from nanning_travel_agent.metro_mcp.metro_client import load_metro_tools
 from nanning_travel_agent.rag.tools import search_nanning_docs
 
 GROUPS = ("dual", "mcp_only")
@@ -107,6 +107,18 @@ async def run_group(group: str, limit: int | None, ids: set[str] | None = None) 
 
         elapsed = int((time.perf_counter() - started) * 1000)
         called = [tc["name"] for m in messages for tc in (getattr(m, "tool_calls", None) or [])]
+
+        call_names: dict[str, str] = {}
+        for m in messages:
+            for tc in getattr(m, "tool_calls", None) or []:
+                call_names[tc["id"]] = tc["name"]
+
+        rag_contexts: list[str] = []
+        for m in messages:
+            if m.type == "tool" and call_names.get(getattr(m, "tool_call_id", None)) == "search_nanning_docs":
+                rag_contexts.extend(p.strip() for p in str(m.content).split("\n\n---\n\n") if p.strip())
+
+
         verdict = judge_case(case, answer, called)
 
         mark = "PASS" if verdict["passed"] else "FAIL"
@@ -144,6 +156,7 @@ async def run_group(group: str, limit: int | None, ids: set[str] | None = None) 
                 "messages": len(messages),
                 "answer": answer,
                 "error": error,
+                "rag_contexts": rag_contexts,
             }
         )
     return rows
