@@ -58,6 +58,6 @@ uv run python scripts/test_gather.py        # 并行取数子图冒烟（子图�
 
 ## 范围基线
 
-- **已完成（对应 `v0.1`）**：五工具路由（1 本地 RAG + 4 MCP）、混合检索 + 重排、会话持久化 + 滚动摘要、工具预算收口、Streamlit 界面、18 条四类规则判分、RAGAS 两指标、MCP 直调与检索三模式验收
-- **未做**：跨会话长期记忆（Store）、RAGAS 口径并入工具上下文、HITL 澄清、MinerU 解析官网公告图片、pytest / CI、与 metro-mcp 合并为 monorepo
+- **已完成（对应 `v0.1`）**：五工具路由（1 本地 RAG + 4 MCP）、混合检索 + 重排、会话持久化 + 滚动摘要、工具预算收口、Streamlit 界面、18 条四类规则判分、RAGAS 两指标（文档片段 + 工具输出合并为上下文，覆盖 17 条）、MCP 直调与检索三模式验收
+- **未做**：跨会话长期记忆（Store）、HITL 澄清、MinerU 解析官网公告图片、pytest / CI、与 metro-mcp 合并为 monorepo
 - **保留但不在链路里**：`agent/gather.py` 并行取数子图（实测混合题无净收益，接进主图会让规则判分认不出工具，故不接入）；`eval/judge.py --group mcp_only` 的 A/B 分组
