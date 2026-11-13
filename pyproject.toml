@@ -1,7 +1,7 @@
 [project]
 name = "nanning-travel-agent"
 version = "0.1.0"
-description = "Add your description here"
+description = "南宁地铁出行助手：LangGraph Agent + 本地 RAG + 自研 MCP 换乘服务"
 authors = [
     { name = "17254", email = "1725424087@qq.com" }
 ]
