@@ -38,15 +38,16 @@ def main() -> None:
     latest = sorted(RESULTS_DIR.glob("*_dual.jsonl"))[-1]
     raw = [json.loads(line) for line in latest.read_text(encoding="utf-8").splitlines() if line.strip()]
 
-    # 只用检索过文档的题：纯换乘题没有 rag_contexts，faithfulness 无从判断
+    # 有文档片段或有工具输出的题都参与评分：纯换乘题的路线事实来自 MCP 工具，
+    # 只用 rag_contexts 会让混合题/换乘题的 faithfulness 被低估
     rows = [
         {
             "user_input": item["question"],
             "response": item["answer"],
-            "retrieved_contexts": item["rag_contexts"],
+            "retrieved_contexts": item.get("rag_contexts", []) + item.get("tool_contexts", []),
         }
         for item in raw
-        if item.get("answer") and item.get("rag_contexts")
+        if item.get("answer") and (item.get("rag_contexts") or item.get("tool_contexts"))
     ]
     print(f"输入: {latest.name}    参与评分: {len(rows)} 条")
 

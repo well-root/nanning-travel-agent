@@ -118,6 +118,13 @@ async def run_group(group: str, limit: int | None, ids: set[str] | None = None) 
             if m.type == "tool" and call_names.get(getattr(m, "tool_call_id", None)) == "search_nanning_docs":
                 rag_contexts.extend(p.strip() for p in str(m.content).split("\n\n---\n\n") if p.strip())
 
+        # 换乘/线路类工具的原始输出也算上下文，RAGAS 只用 rag_contexts 会漏掉路线事实
+        tool_contexts: list[str] = []
+        for m in messages:
+            if m.type == "tool" and call_names.get(getattr(m, "tool_call_id", None)) != "search_nanning_docs":
+                text = str(m.content).strip()
+                if text:
+                    tool_contexts.append(text)
 
         verdict = judge_case(case, answer, called)
 
@@ -157,6 +164,7 @@ async def run_group(group: str, limit: int | None, ids: set[str] | None = None) 
                 "answer": answer,
                 "error": error,
                 "rag_contexts": rag_contexts,
+                "tool_contexts": tool_contexts,
             }
         )
     return rows
