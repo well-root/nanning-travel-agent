@@ -10,10 +10,12 @@ from pathlib import Path
 import streamlit as st
 from dotenv import load_dotenv
 from langchain_core.messages import HumanMessage
-from langchain_openai import ChatOpenAI
 from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
+from langgraph.store.sqlite.aio import AsyncSqliteStore
 
 from nanning_travel_agent.agent.graph import build_graph
+from nanning_travel_agent.agent.llm import build_llm
+from nanning_travel_agent.agent.memory import STORE_DB
 from nanning_travel_agent.metro_mcp.metro_client import load_metro_tools
 from nanning_travel_agent.rag.tools import search_nanning_docs
 
@@ -25,27 +27,18 @@ CHECKPOINT_DB = CHECKPOINT_DIR / "checkpoints.sqlite"
 RECURSION_LIMIT = 20
 
 
-def build_llm(model: str, temperature: float) -> ChatOpenAI:
-    api_key = os.environ.get("DEEPSEEK_API_KEY")
-    if not api_key:
-        raise RuntimeError("DEEPSEEK_API_KEY not set")
-    return ChatOpenAI(
-        api_key=api_key,
-        base_url="https://api.deepseek.com",
-        model=model,
-        temperature=temperature,
-    )
-
-
-async def run_turn(question: str, thread_id: str, model: str, temperature: float):
+async def run_turn(question: str, thread_id: str, model: str, temperature: float, user_id: str):
     """一次问答在自己的事件循环里建库连接、加载工具、跑图，避免跨 loop 复用对象。"""
     CHECKPOINT_DIR.mkdir(parents=True, exist_ok=True)
     tools = [search_nanning_docs, *(await load_metro_tools())]
 
-    async with AsyncSqliteSaver.from_conn_string(str(CHECKPOINT_DB)) as saver:
-        graph = build_graph(build_llm(model, temperature), tools, saver)
+    async with (
+        AsyncSqliteStore.from_conn_string(str(STORE_DB)) as store,
+        AsyncSqliteSaver.from_conn_string(str(CHECKPOINT_DB)) as saver,
+    ):
+        graph = build_graph(build_llm(model, temperature), tools, saver, store)
         config = {
-            "configurable": {"thread_id": thread_id},
+            "configurable": {"thread_id": thread_id, "user_id": user_id},
             "recursion_limit": RECURSION_LIMIT,
         }
         before = len((await graph.aget_state(config)).values.get("messages", []))
@@ -70,6 +63,7 @@ if "messages" not in st.session_state:
 with st.sidebar:
     st.subheader("会话")
     thread_id = st.text_input("thread_id", value="ui-local")
+    user_id = st.text_input("user_id（长期记忆按它隔离）", value="local")
     model = st.selectbox("模型", ["deepseek-flash", "deepseek-chat"])
     temperature = st.slider("temperature", 0.0, 1.0, 0.1, 0.05)
     if st.button("清屏（服务端历史保留）"):
@@ -95,7 +89,7 @@ if question:
     with st.chat_message("assistant"):
         with st.spinner("查资料 / 查换乘中…"):
             answer, calls, outputs = asyncio.run(
-                run_turn(question, thread_id, model, temperature)
+                run_turn(question, thread_id, model, temperature, user_id)
             )
         st.markdown(answer)
         if calls:
