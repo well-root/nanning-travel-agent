@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><title>南宁出行助手</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚇</text></svg>">
+<style>
+body{font-family:system-ui,"Microsoft YaHei",sans-serif;max-width:720px;margin:40px auto;padding:0 16px}
+#log{white-space:pre-wrap;line-height:1.7;min-height:160px;border:1px solid #ddd;border-radius:8px;padding:12px}
+#q{width:100%;padding:10px;margin:12px 0;box-sizing:border-box}
+button{padding:8px 18px}
+</style></head><body>
+<h3>南宁出行助手</h3>
+<div id="log"></div>
+<input id="q" placeholder="从广西大学到朝阳广场怎么走？"/>
+<button onclick="send()">发送</button>
+<script>
+const log = document.getElementById("log");
+const threadId = "web-" + Date.now();
+async function send() {
+  const q = document.getElementById("q").value.trim();
+  if (!q) return;
+  log.textContent += "\n你: " + q + "\n助手: ";
+  const resp = await fetch("/chat/stream", {
+    method: "POST", headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({message: q, thread_id: threadId})
+  });
+  const reader = resp.body.getReader(), decoder = new TextDecoder();
+  let buf = "";
+  while (true) {
+    const {value, done} = await reader.read();
+    if (done) break;
+    buf += decoder.decode(value, {stream: true});
+    const parts = buf.split("\n\n");
+    buf = parts.pop();
+    for (const part of parts) {
+      if (!part.startsWith("data: ")) continue;
+      const ev = JSON.parse(part.slice(6));
+      if (ev.type === "token") log.textContent += ev.text;
+      if (ev.type === "need_input") log.textContent += "\n（需要补充）" + ev.question;
+      if (ev.type === "done") log.textContent += "\n[" + ev.elapsed_ms + "ms]\n";
+    }
+  }
+}
+</script></body></html>
