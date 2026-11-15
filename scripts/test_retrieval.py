@@ -1,4 +1,9 @@
-"""检索验收：不经过模型，直接测召回。vector / hybrid / hybrid+rerank 三组对比。"""
+"""检索验收：不经过模型，直接测召回。vector / hybrid / hybrid+rerank 三组对比。
+
+每条 query 允许命中一组等价文档：官网公告入库后，票价与优惠类问题有两份都正确的语料
+（维基转述的 tickets_discounts / fare_pricing 与官方公告 official_ticket_policy），
+top-1 落在哪一份取决于分块边界，不应算失败。
+"""
 
 import argparse
 from pathlib import Path
@@ -10,11 +15,11 @@ from nanning_travel_agent.rag.retrieval import HybridRetriever
 load_dotenv(Path(__file__).resolve().parents[1] / ".env")
 
 CASES = [
-    ("南宁地铁起步价多少，能坐多远", "南宁地铁票价计价规则"),
-    ("南宁市民卡坐地铁打几折", "南宁地铁票种与优惠政策"),
-    ("宁仔计次票在哪些车站能买到", "南宁地铁计次票"),
-    ("南宁地铁周五、周六运营到几点", "南宁地铁运营服务时间"),
-    ("坐完公交 90 分钟内换乘地铁有优惠吗", "南宁地铁票种与优惠政策"),
+    ("南宁地铁起步价多少，能坐多远", {"南宁地铁票价计价规则", "南宁地铁基本票价及票务管理规定（官网）"}),
+    ("南宁市民卡坐地铁打几折", {"南宁地铁票种与优惠政策", "南宁地铁基本票价及票务管理规定（官网）"}),
+    ("宁仔计次票在哪些车站能买到", {"南宁地铁计次票"}),
+    ("南宁地铁周五、周六运营到几点", {"南宁地铁运营服务时间"}),
+    ("坐完公交 90 分钟内换乘地铁有优惠吗", {"南宁地铁票种与优惠政策", "南宁地铁基本票价及票务管理规定（官网）"}),
 ]
 
 CONFIGS = [
@@ -44,8 +49,9 @@ def main() -> None:
                 continue
             doc, score = hits[0]
             title = doc.metadata.get("title", "")
-            ok = title == want
-            print(f"{'PASS' if ok else 'FAIL'} {score:.3f} {title} (期望 {want}) | {query}")
+            ok = title in want
+            expect_text = " 或 ".join(sorted(want))
+            print(f"{'PASS' if ok else 'FAIL'} {score:.3f} {title} (期望 {expect_text}) | {query}")
             bad += 0 if ok else 1
         print(f"{len(CASES) - bad}/{len(CASES)}")
         failed += bad

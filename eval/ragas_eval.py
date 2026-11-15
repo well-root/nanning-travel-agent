@@ -23,12 +23,12 @@ from dotenv import load_dotenv
 ROOT = Path(__file__).resolve().parents[1]
 load_dotenv(ROOT / ".env")
 
-from langchain_openai import ChatOpenAI
 from ragas import EvaluationDataset, evaluate
 from ragas.embeddings import LangchainEmbeddingsWrapper
 from ragas.llms import LangchainLLMWrapper
 from ragas.metrics import answer_relevancy, faithfulness
 
+from nanning_travel_agent.agent.llm import build_llm
 from nanning_travel_agent.rag.embedding import get_embeddings
 
 RESULTS_DIR = ROOT / "eval" / "results"
@@ -52,12 +52,7 @@ def main() -> None:
     print(f"输入: {latest.name}    参与评分: {len(rows)} 条")
 
     llm = LangchainLLMWrapper(
-        ChatOpenAI(
-            api_key=os.environ["DEEPSEEK_API_KEY"],
-            base_url="https://api.deepseek.com",
-            model="deepseek-flash",
-            temperature=0,
-        ),
+        build_llm("deepseek-flash", temperature=0),
         # DeepSeek 只支持 n=1，ragas 默认会给 ChatOpenAI 传 n>1，必须关掉
         bypass_n=True,
     )

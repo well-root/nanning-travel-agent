@@ -11,26 +11,16 @@ from dotenv import load_dotenv
 ROOT = Path(__file__).resolve().parents[1]
 load_dotenv(ROOT / ".env")
 
-from langchain_openai import ChatOpenAI
-
 from nanning_travel_agent.agent.gather import build_gather_graph, make_gather_tool
+from nanning_travel_agent.agent.llm import build_llm
 from nanning_travel_agent.metro_mcp.metro_client import load_metro_tools
 from nanning_travel_agent.rag.tools import search_nanning_docs
 
 QUESTION = "从朝阳广场到火车东站怎么走，大概要多长时间，票价是多少？"
 
 
-def make_llm() -> ChatOpenAI:
-    return ChatOpenAI(
-        api_key=os.environ["DEEPSEEK_API_KEY"],
-        base_url="https://api.deepseek.com",
-        model="deepseek-flash",
-        temperature=0.1,
-    )
-
-
 async def main() -> int:
-    llm = make_llm()
+    llm = build_llm()
     tools = [search_nanning_docs, *(await load_metro_tools())]
     print(f"工具池 {len(tools)} 个: {[t.name for t in tools]}\n")
 

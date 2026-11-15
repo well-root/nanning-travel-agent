@@ -13,13 +13,13 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 from langchain_core.messages import HumanMessage
-from langchain_openai import ChatOpenAI
 
 EVAL_DIR = Path(__file__).resolve().parent
 ROOT = EVAL_DIR.parent
 load_dotenv(ROOT / ".env")
 
 from nanning_travel_agent.agent.graph import  build_graph
+from nanning_travel_agent.agent.llm import build_llm
 from nanning_travel_agent.metro_mcp.metro_client import load_metro_tools
 from nanning_travel_agent.rag.tools import search_nanning_docs
 
@@ -27,13 +27,8 @@ GROUPS = ("dual", "mcp_only")
 RECURSION_LIMIT = 20
 
 
-def build_llm() -> ChatOpenAI:
-    api_key = os.environ.get("DEEPSEEK_API_KEY")
-    if not api_key:
-        raise RuntimeError("DEEPSEEK_API_KEY 没读到，检查根目录 .env")
-    return ChatOpenAI(
-        api_key=api_key,
-        base_url="https://api.deepseek.com",
+def make_llm():
+    return build_llm(
         model=os.environ.get("EVAL_MODEL", "deepseek-flash"),
         temperature=float(os.environ.get("EVAL_TEMPERATURE", "0.1")),
     )
@@ -72,7 +67,7 @@ def judge_case(case: dict, answer: str, called: list[str]) -> dict:
 
 
 async def run_group(group: str, limit: int | None, ids: set[str] | None = None) -> list[dict]:
-    llm = build_llm()
+    llm = make_llm()
     tools = await load_metro_tools()
     if group == "dual":
         tools = [search_nanning_docs, *tools]
